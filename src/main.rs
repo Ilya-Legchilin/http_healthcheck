@@ -24,10 +24,10 @@ pub struct Config {
 impl Config {
     pub fn build(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
-            return Err("not enough arguments");
+            return Err("Not enough arguments");
         }
         let interval = match args[1].clone().parse() {
-            Err(_) => return Err("failure parsing interval"),
+            Err(_) => return Err("Failure parsing interval"),
             Ok(value) => value,
         };
         let url = args[2].clone();
@@ -42,14 +42,13 @@ impl Config {
     }
 }
 
-async fn run(config: Config) -> Result<String, Box<dyn std::error::Error>> {
+async fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
     let res = reqwest::get(config.url.clone()).await?;
     let status = match res.status() {
         StatusCode::OK => format!("OK(200)"),
         _ => format!("ERR({})", res.status().as_u16())
     };
     println!("Checking '{}'. Result: {}", config.url, status);
-    let response = format!("Checking '{}'. Result: {}", config.url, res.status());
     thread::sleep(Duration::from_secs(config.interval));
-    Ok(response)
+    Ok(())
 }
